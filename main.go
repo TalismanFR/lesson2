@@ -1,165 +1,42 @@
 package main
 
-import (
-	"bufio"
-	"fmt"
-	"math/cmplx"
-	"os"
-	"strconv"
-	"strings"
-)
+import "fmt"
 
 func main() {
-	var A, B, C float64
+	var x [10]int
 
-	defer func() {
-		if r := recover(); r != nil {
-			fmt.Println("Произошла паника ", r)
-		}
+	x[0] = 2
 
-	}()
+	xx := x
 
-	var err error
-	//A, B, C, err = floatFromFile("abc")
-	A, B, C, err = floatesFromFile("abc")
-	//A, err = getFloatParam("A")
-	if err != nil {
-		fmt.Printf("Error parse float " + err.Error())
-		return
-	}
+	xx[0] = 3
+	fmt.Println(x, cap(x), xx, cap(xx))
 
-	//else {
-	//	fmt.Println("Value A=", A)
-	//}
-	//
-	//B, err = getFloatParam("B")
-	//if err != nil {
-	//	fmt.Printf("Error parse float " + err.Error())
-	//	return
-	//}
-	//C, err = getFloatParam("C")
-	//if err != nil {
-	//	fmt.Printf("Error parse float " + err.Error())
-	//	return
-	//}
+	arr1 := x[0:3]
+	arr1 = append(arr1, 3)
+	fmt.Printf("arr1 type= %T %v  cap=%v len=%v\n", arr1, arr1, cap(arr1), len(arr1))
+	fmt.Println("arr ", x)
 
-	fmt.Printf("Уравнение %.2fx^2+%.2fx+%.2f\n", A, B, C)
+	var slice1 = make([]int, 5)
+	fmt.Printf("slice1 type= %T %v  cap=%v len=%v\n", slice1, slice1, cap(slice1), len(slice1))
+	//slice1 = append(slice1, 4)
+	fmt.Printf("slice1 after append type= %T %v  cap=%v len=%v\n", slice1, slice1, cap(slice1), len(slice1))
 
-	a := complex(A, 0)
-	b := complex(B, 0)
-	c := complex(C, 0)
+	slice2 := slice1
 
-	sqrD := cmplx.Sqrt(b*b - 4*a*c)
-	x1 := (-b + sqrD) / (2 * a)
-	x2 := (-b - sqrD) / (2 * a)
+	slice2[1] = 4
+	slice2 = append(slice2, 5)
+	slice2[1] = 3
+	fmt.Printf("slice1 and slice2. Slice1: %v  cap=%v len=%v \n Slice2: %v  cap=%v len=%v\n",
+		slice1, cap(slice1), len(slice1), slice2, cap(slice2), len(slice2))
 
-	fmt.Printf("d=", sqrD)
-	fmt.Printf("x1=", x1, "x2=", x2)
+	slice3 := make([]int, 0, 10)
 
-}
+	var slice4 []int
+	copy(slice4, slice3)
 
-func floatesFromFile(filename string) (a, b, c float64, err error) {
-	file, err := os.Open(filename)
-	if err != nil {
-		fmt.Println(err)
-		return
-	} else {
-		fmt.Println("Файл " + filename + " успешно получен")
-	}
+	slice4 = append(slice4, 1)
 
-	defer fmt.Printf("первый девер\n")
-	defer fmt.Printf("второй девер\n")
-	defer func() {
-		fmt.Printf("Закрытие файла\n")
-		file.Close()
-	}()
+	fmt.Printf("slice3 %v len==%v cap=%v", slice3, len(slice3), cap(slice3))
 
-	scanner := bufio.NewScanner(file)
-
-	var line string
-	for scanner.Scan() {
-		line += scanner.Text() + "\n"
-	}
-
-	fmt.Printf("%T %v\n", line, line)
-
-	for i, code := range line {
-		fmt.Printf("string step %v val=%c \n", i, code)
-	}
-
-	lines := strings.Split(line, "\n")
-
-	fmt.Printf("%T %v\n", lines, lines)
-
-	for i, code := range lines {
-		fmt.Printf("step %v val=%v\n", i, code)
-
-		switch i {
-		case 0:
-			a, _ = strconv.ParseFloat(code, 64)
-		case 1:
-			b, _ = strconv.ParseFloat(code, 64)
-		case 2:
-			c, _ = strconv.ParseFloat(code, 64)
-		default:
-			fmt.Printf("index ", i, "val=", code)
-		}
-	}
-
-	return
-}
-
-func floatFromFile(filename string) (a, b, c float64, err error) {
-	file, err := os.Open(filename)
-	if err != nil {
-		fmt.Println(err)
-		return
-	} else {
-		fmt.Println("Файл " + filename + " успешно получен")
-	}
-
-	defer fmt.Printf("первый девер\n")
-	defer fmt.Printf("второй девер\n")
-	defer func() {
-		fmt.Printf("Закрытие файла\n")
-		file.Close()
-	}()
-
-	scanner := bufio.NewScanner(file)
-
-	if scanner.Scan() {
-		a, err = strconv.ParseFloat(scanner.Text(), 64)
-		if err != nil {
-			fmt.Println("error parse value" + scanner.Text())
-			panic("error parse")
-			//return
-		}
-	}
-
-	if scanner.Scan() {
-		b, err = strconv.ParseFloat(scanner.Text(), 64)
-		if err != nil {
-			fmt.Println("error parse value" + scanner.Text())
-			return
-		}
-	}
-
-	if scanner.Scan() {
-		c, err = strconv.ParseFloat(scanner.Text(), 64)
-		if err != nil {
-			fmt.Println("error parse value" + scanner.Text())
-			return
-		}
-	}
-
-	return
-
-}
-
-func getFloatParam(label string) (param float64, err error) {
-	var val string
-	fmt.Println(label + "=")
-	fmt.Scanln(&param)
-	param, err = strconv.ParseFloat(val, 64)
-	return
 }
