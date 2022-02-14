@@ -1,42 +1,47 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"lesson2/distance"
+	"lesson2/distance/navigator"
+	"lesson2/distance/point"
+)
 
 func main() {
-	var x [10]int
+	line := distance.NewLine2d(*point.NewPoint2d(1, 0), *point.NewPoint2d(2, 3))
 
-	x[0] = 2
+	fmt.Println(line)
 
-	xx := x
+	distance2dLine := line.Distance()
 
-	xx[0] = 3
-	fmt.Println(x, cap(x), xx, cap(xx))
+	fmt.Printf("line2d %T имеет растояние %v\n", line, distance2dLine)
 
-	arr1 := x[0:3]
-	arr1 = append(arr1, 3)
-	fmt.Printf("arr1 type= %T %v  cap=%v len=%v\n", arr1, arr1, cap(arr1), len(arr1))
-	fmt.Println("arr ", x)
+	line3d1 := distance.NewLine3d(*point.NewPoint3d(1, 0, 1), *point.NewPoint3d(0, 1, 0))
 
-	var slice1 = make([]int, 5)
-	fmt.Printf("slice1 type= %T %v  cap=%v len=%v\n", slice1, slice1, cap(slice1), len(slice1))
-	//slice1 = append(slice1, 4)
-	fmt.Printf("slice1 after append type= %T %v  cap=%v len=%v\n", slice1, slice1, cap(slice1), len(slice1))
+	fmt.Println(line3d1)
 
-	slice2 := slice1
+	line3d1Distance, _ := line3d1.Distance()
+	fmt.Printf("line3d имеет растояние %v\n", line3d1Distance)
 
-	slice2[1] = 4
-	slice2 = append(slice2, 5)
-	slice2[1] = 3
-	fmt.Printf("slice1 and slice2. Slice1: %v  cap=%v len=%v \n Slice2: %v  cap=%v len=%v\n",
-		slice1, cap(slice1), len(slice1), slice2, cap(slice2), len(slice2))
+	path3d1 := distance.NewPath3d(make([]point.Point3d, 0))
+	path3d1.AddPoint(*point.NewPoint3d(1, 1, 1)).AddPoint(*point.NewPoint3d(2, 3, 3)).AddPoint(*point.NewPoint3d(2, 3, 4))
 
-	slice3 := make([]int, 0, 10)
+	distancePath3d, _ := path3d1.Distance()
+	fmt.Printf("path3d полный путь %v\n", distancePath3d)
 
-	var slice4 []int
-	copy(slice4, slice3)
+	navi := navigator.NewNavigator([]navigator.AllDistance{path3d1, line3d1})
 
-	slice4 = append(slice4, 1)
+	fullPath, err := navi.Path()
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+	fmt.Printf("Полный путь по навигатору %v\n", fullPath)
 
-	fmt.Printf("slice3 %v len==%v cap=%v", slice3, len(slice3), cap(slice3))
+	PrintfLn("Path %v", fullPath)
 
+}
+
+func PrintfLn(format string, a ...interface{}) (n int, err error) {
+	return fmt.Printf(format+"\n", a...)
 }
