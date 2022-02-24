@@ -1,47 +1,43 @@
 package main
 
 import (
+	"flag"
 	"fmt"
-	"lesson2/distance"
-	"lesson2/distance/navigator"
-	"lesson2/distance/point"
+	"lesson2/mycrypt"
+	"log"
 )
 
 func main() {
-	line := distance.NewLine2d(*point.NewPoint2d(1, 0), *point.NewPoint2d(2, 3))
+	var fileSource, hashFile, outFile string
 
-	fmt.Println(line)
+	flag.StringVar(&fileSource, "source-file", "", "File source")
+	flag.StringVar(&hashFile, "hash-file", "", "File hash")
+	flag.StringVar(&outFile, "out-file", "sign.txt", "File output")
 
-	distance2dLine := line.Distance()
+	flag.Parse()
+	action := flag.Args()[0]
 
-	fmt.Printf("line2d %T имеет растояние %v\n", line, distance2dLine)
+	switch action {
+	case "enc":
+		encoder, err := mycrypt.NewEncoder(fileSource, hashFile)
+		if err != nil {
+			log.Fatal(err)
+			return
+		}
+		fmt.Println(encoder)
 
-	line3d1 := distance.NewLine3d(*point.NewPoint3d(1, 0, 1), *point.NewPoint3d(0, 1, 0))
+		err = encoder.EncryptSha256()
+		if err != nil {
+			panic(err)
+		}
 
-	fmt.Println(line3d1)
+		err = encoder.SaveToFile(outFile)
+		if err != nil {
+			panic(err)
+		}
+	case "dec":
 
-	line3d1Distance, _ := line3d1.Distance()
-	fmt.Printf("line3d имеет растояние %v\n", line3d1Distance)
-
-	path3d1 := distance.NewPath3d(make([]point.Point3d, 0))
-	path3d1.AddPoint(*point.NewPoint3d(1, 1, 1)).AddPoint(*point.NewPoint3d(2, 3, 3)).AddPoint(*point.NewPoint3d(2, 3, 4))
-
-	distancePath3d, _ := path3d1.Distance()
-	fmt.Printf("path3d полный путь %v\n", distancePath3d)
-
-	navi := navigator.NewNavigator([]navigator.AllDistance{path3d1, line3d1})
-
-	fullPath, err := navi.Path()
-	if err != nil {
-		fmt.Println(err.Error())
-		return
+	default:
+		log.Fatal("Use enc or dec param")
 	}
-	fmt.Printf("Полный путь по навигатору %v\n", fullPath)
-
-	PrintfLn("Path %v", fullPath)
-
-}
-
-func PrintfLn(format string, a ...interface{}) (n int, err error) {
-	return fmt.Printf(format+"\n", a...)
 }
