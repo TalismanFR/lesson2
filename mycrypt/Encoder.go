@@ -8,14 +8,18 @@ import (
 )
 
 type Encoder struct {
-	hashSign string
+	hashSign   string
 	fileSource string
-	signature contract.Signature
+	signature  contract.Signature
+}
+
+func (enc *Encoder) Signature() contract.Signature {
+	return enc.signature
 }
 
 func NewEncoder(fileSource string, fileHashSign string) (enc *Encoder, err error) {
 	hashString, err := ioutil.ReadFile(fileHashSign)
-	if err != nil{
+	if err != nil {
 		return
 	}
 
@@ -25,7 +29,7 @@ func NewEncoder(fileSource string, fileHashSign string) (enc *Encoder, err error
 
 func (enc *Encoder) EncryptSha256() (err error) {
 	file, err := os.Open(enc.fileSource)
-	if err!=nil {
+	if err != nil {
 		return err
 
 	}
@@ -38,7 +42,7 @@ func (enc *Encoder) EncryptSha256() (err error) {
 	return
 }
 
-func (enc Encoder) SaveToFile(path string)(err error) {
+func (enc Encoder) SaveToFile(path string) (err error) {
 	err = ioutil.WriteFile(path, enc.signature.SignatureByte(), 0644)
 	return
 }
