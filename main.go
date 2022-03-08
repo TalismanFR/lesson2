@@ -12,6 +12,8 @@ import (
 
 func main() {
 
+	pp()
+
 	var fileSource, hashFile, outFile string
 
 	flag.StringVar(&fileSource, "source-file", "", "File source")
@@ -41,8 +43,11 @@ func main() {
 		fmt.Println("bytes", buf.Bytes())
 
 		si := signature.SignatureSha256{}
-		packer.Unpack(si, buf.Bytes())
-		fmt.Println("unpack struct ", si)
+		si.Unpack(buf.Bytes())
+
+		fmt.Println(si)
+		//packer.Unpack(si, buf.Bytes())
+		//fmt.Println("unpack struct ", si)
 
 		//var s = struct{ foo int }{654}
 		//rf := reflect.ValueOf(&s).Elem().Field(0)
@@ -84,4 +89,19 @@ func PrintReflect(u interface{}) error {
 			val.Type().Field(i).Tag)
 	}
 	return nil
+}
+
+func pp() {
+	p := 1
+	v := &p
+
+	fmt.Println(p)
+	ppc(v)
+
+	fmt.Println(p)
+}
+
+func ppc(c *int) {
+	d := 3
+	*c = d
 }

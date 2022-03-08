@@ -54,7 +54,7 @@ func Pack(sig interface{}) (buf *bytes.Buffer, err error) {
 		case reflect.Uint32, reflect.Uint64:
 			s := v.Field(i).Uint()
 			_ = s
-			err = binary.Write(buff, orderByte, byte(s))
+			err = binary.Write(buff, orderByte, s)
 		case reflect.String:
 			s := v.Field(i).String()
 			b := []byte(s)

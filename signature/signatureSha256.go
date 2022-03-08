@@ -12,8 +12,10 @@ import (
 	"time"
 )
 
+// File Signature
+// cgen: binpack
 type SignatureSha256 struct {
-	date      time.Time `pack:"dateTag"`
+	date      time.Time `cgen:"-"`
 	size      uint64
 	name      string
 	signature []byte
